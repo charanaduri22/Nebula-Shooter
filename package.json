@@ -1,0 +1,27 @@
+{
+  "name": "nebula-shooter",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Project Nebula Shooter — 2D side-scrolling arcade space shooter (PixiJS + Vite)",
+  "scripts": {
+    "dev":     "vite",
+    "build":   "vite build",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "pixi.js": "^8.6.6"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "browserslist": [
+    "chrome >= 90",
+    "firefox >= 88",
+    "safari >= 14",
+    "edge >= 90"
+  ]
+}

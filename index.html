@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Project Nebula Shooter — A high-fidelity 2D side-scrolling arcade space shooter built with PixiJS and WebGL." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <title>Project Nebula Shooter</title>
+  <!-- Google Fonts loaded asynchronously — game works offline with system fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap"
+        media="print" onload="this.media='all'" />
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" />
+  </noscript>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <!-- PixiJS canvas will be injected here -->
+  <div id="game-container"></div>
+
+  <!-- HUD Overlay (HTML/CSS on top of PixiJS canvas) -->
+  <div id="hud-overlay">
+
+    <!-- ═══ TOP-LEFT: Resource Bars ═══ -->
+    <div id="hud-top-left" class="hud-section">
+      <div class="resource-bar hp-bar">
+        <div class="bar-label-box">
+          <span class="bar-label">HP</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" id="hp-fill" style="width: 13%"></div>
+          <div class="bar-shine"></div>
+        </div>
+        <span class="bar-value" id="hp-value">730/55000</span>
+      </div>
+      <div class="resource-bar shield-bar">
+        <div class="bar-label-box">
+          <span class="bar-label">SHLD</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" id="shield-fill" style="width: 35%"></div>
+          <div class="bar-shine"></div>
+        </div>
+        <span class="bar-value" id="shield-value">35/4%</span>
+      </div>
+      <div class="resource-bar energy-bar">
+        <div class="bar-label-box">
+          <span class="bar-label">ENG</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" id="energy-fill" style="width: 60%"></div>
+          <div class="bar-shine"></div>
+        </div>
+        <span class="bar-value" id="energy-value">x1.8</span>
+      </div>
+    </div>
+
+    <!-- ═══ TOP-RIGHT: Wave Status & Radar ═══ -->
+    <div id="hud-top-right" class="hud-section">
+      <div id="wave-status">WAVE 14 / BOSS APPROACHING</div>
+      <div id="radar-wrapper">
+        <canvas id="radar-canvas" width="160" height="160"></canvas>
+        <div id="radar-sweep"></div>
+      </div>
+    </div>
+
+    <!-- ═══ BOTTOM-LEFT: Weapon Slots ═══ -->
+    <div id="hud-bottom-left" class="hud-section">
+      <div class="weapon-slot active" id="weapon-slot-1">
+        <div class="weapon-icon-box">
+          <svg class="weapon-svg" viewBox="0 0 40 40" width="36" height="36">
+            <!-- Stylized blaster icon -->
+            <rect x="4" y="16" width="28" height="8" rx="1" fill="#4da6ff" opacity="0.9"/>
+            <rect x="28" y="12" width="8" height="16" rx="1" fill="#4da6ff" opacity="0.7"/>
+            <rect x="8" y="14" width="4" height="12" rx="1" fill="#2a7fff"/>
+            <rect x="14" y="18" width="12" height="4" rx="0.5" fill="#80d8ff"/>
+            <line x1="32" y1="14" x2="38" y2="10" stroke="#4da6ff" stroke-width="1.5" opacity="0.5"/>
+            <line x1="32" y1="26" x2="38" y2="30" stroke="#4da6ff" stroke-width="1.5" opacity="0.5"/>
+            <rect x="4" y="26" width="8" height="6" rx="1" fill="#2a7fff" opacity="0.6"/>
+          </svg>
+          <span class="weapon-ammo-badge">∞</span>
+        </div>
+        <div class="weapon-info">
+          <span class="weapon-name">PLASMA BLASTER</span>
+          <span class="weapon-ammo">[AMMO: ∞]</span>
+        </div>
+      </div>
+      <div class="weapon-slot" id="weapon-slot-2">
+        <div class="weapon-icon-box">
+          <svg class="weapon-svg" viewBox="0 0 40 40" width="36" height="36">
+            <!-- Stylized missile icon -->
+            <polygon points="36,20 28,12 6,14 4,20 6,26 28,28" fill="#ff6d00" opacity="0.85"/>
+            <polygon points="36,20 28,16 28,24" fill="#ffab40"/>
+            <rect x="4" y="17" width="6" height="6" rx="1" fill="#bf360c" opacity="0.7"/>
+            <line x1="8" y1="14" x2="2" y2="10" stroke="#ff9100" stroke-width="1.5" opacity="0.5"/>
+            <line x1="8" y1="26" x2="2" y2="30" stroke="#ff9100" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="18" cy="20" r="2.5" fill="#ffd600" opacity="0.6"/>
+          </svg>
+          <span class="weapon-ammo-badge missile-badge">3/5</span>
+        </div>
+        <div class="weapon-info">
+          <span class="weapon-name">HEAVY MISSILE</span>
+          <span class="weapon-ammo" id="missile-ammo">(3/5)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ BOTTOM-RIGHT: Combo & Abilities ═══ -->
+    <div id="hud-bottom-right" class="hud-section">
+      <div id="combo-display">
+        <span id="combo-label">COMBO</span>
+        <span id="combo-value">x24</span>
+      </div>
+      <div id="ability-buttons">
+        <button class="ability-btn shield-ability" id="ability-shield">
+          <div class="ability-icon-wrap">
+            <svg viewBox="0 0 40 40" width="30" height="30">
+              <path d="M20 4 L34 12 L34 24 C34 32 20 38 20 38 C20 38 6 32 6 24 L6 12 Z" 
+                    fill="none" stroke="#4da6ff" stroke-width="2.5" opacity="0.9"/>
+              <path d="M20 10 L28 15 L28 23 C28 28 20 32 20 32 C20 32 12 28 12 23 L12 15 Z" 
+                    fill="#4da6ff" opacity="0.25"/>
+              <line x1="20" y1="14" x2="20" y2="28" stroke="#4da6ff" stroke-width="1.5" opacity="0.5"/>
+              <line x1="14" y1="20" x2="26" y2="20" stroke="#4da6ff" stroke-width="1.5" opacity="0.5"/>
+            </svg>
+          </div>
+          <span class="ability-label">SHIELD<br>OVERLOAD</span>
+          <div class="ability-cooldown" id="shield-cooldown"></div>
+        </button>
+        <button class="ability-btn bomb-ability" id="ability-bomb">
+          <div class="ability-icon-wrap">
+            <svg viewBox="0 0 40 40" width="30" height="30">
+              <!-- Vortex/spiral -->
+              <circle cx="20" cy="20" r="14" fill="none" stroke="#b388ff" stroke-width="1.5" opacity="0.4"/>
+              <circle cx="20" cy="20" r="9" fill="none" stroke="#b388ff" stroke-width="1.5" opacity="0.6"/>
+              <circle cx="20" cy="20" r="4" fill="#b388ff" opacity="0.5"/>
+              <path d="M20 6 Q30 12 26 20 Q22 28 20 34" fill="none" stroke="#ce93d8" stroke-width="1.5" opacity="0.5"/>
+              <path d="M6 20 Q12 10 20 14 Q28 18 34 20" fill="none" stroke="#ce93d8" stroke-width="1.5" opacity="0.5"/>
+            </svg>
+          </div>
+          <span class="ability-label">GRAVITY<br>BOMB</span>
+          <div class="ability-cooldown" id="bomb-cooldown"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- FPS Counter (dev) -->
+    <div id="fps-counter" class="hud-section">FPS: --</div>
+
+  </div>
+
+  <!-- Portrait Rotation Overlay -->
+  <div id="rotate-overlay">
+    <div id="rotate-content">
+      <div id="rotate-phone-icon">
+        <div id="phone-body">
+          <div id="phone-screen"></div>
+        </div>
+        <div id="rotate-arrow">↻</div>
+      </div>
+      <h2>Please Rotate Your Device</h2>
+      <p>This game is optimized for landscape orientation</p>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

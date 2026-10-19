@@ -1,0 +1,14 @@
+/*
+  Cross-Origin headers required for SharedArrayBuffer (PixiJS audio/workers).
+  GitHub Pages serves these automatically for GitHub Actions deploys.
+  If serving manually, add this _headers file to your dist/ root.
+*/
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.html
+  Cache-Control: no-cache

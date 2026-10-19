@@ -1,0 +1,19 @@
+# ── Build output (never commit) ───────────────────────────────
+dist/
+.vite/
+
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+
+# ── OS & editor junk ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.env
+.env.*
+*.local
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.user
